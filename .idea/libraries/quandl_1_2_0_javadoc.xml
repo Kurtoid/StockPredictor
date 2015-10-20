@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="quandl-1.2.0-javadoc">
+    <CLASSES />
+    <JAVADOC>
+      <root url="jar://$PROJECT_DIR$/lib/quandl-1.2.0-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/lib/quandl-1.2.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
