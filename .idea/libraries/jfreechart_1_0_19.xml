@@ -1,9 +1,15 @@
 <component name="libraryTable">
   <library name="jfreechart-1.0.19">
     <CLASSES>
-      <root url="jar://$USER_HOME$/Downloads/jfreechart-1.0.19/lib/jfreechart-1.0.19.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jfreechart-1.0.19.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jcommon-1.0.23.jar!/" />
+      <root url="file://$PROJECT_DIR$" />
     </CLASSES>
     <JAVADOC />
-    <SOURCES />
+    <SOURCES>
+      <root url="file://$PROJECT_DIR$/lib/jimmoores-quandl4j-0f684f6/src/main/java" />
+      <root url="file://$PROJECT_DIR$/lib/jimmoores-quandl4j-0f684f6/src/test/java" />
+      <root url="file://$PROJECT_DIR$/src" />
+    </SOURCES>
   </library>
 </component>

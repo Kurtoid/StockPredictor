@@ -29,7 +29,7 @@ public class StockPredictorChangeRepeat {
 
 
 	static int openCloseSets = 10;
-	static int expectedSets = 1;
+	static int expectedSets = 4;
 	static int sampleReserve = 3;
 	static int otherBack = 5;
 	static int offset = sampleReserve + expectedSets;
@@ -139,7 +139,7 @@ public class StockPredictorChangeRepeat {
 				System.out.print(d / vCode + ", ");
 				closeOut[i - expectedSets] = d / vCode;
 				//System.out.print((output.getData(i)) + ", ");
-				//closeOut[i - expectedSets] = output.getData(i);
+				//closeOut[i - networkExpectedSets] = output.getData(i);
 			}
 
 			System.out.println();
@@ -181,7 +181,7 @@ double[] vals = new double[8];
 		vals[(openCloseSets * 2)] = goldNorm.normalize(goldPrices.get(0));
 		vals[(openCloseSets * 2) + 1] = goldNorm.normalize(goldPrices.get(1));
 		MLData out = network.compute(new BasicMLData(vals));
-		for(int i =0; i<expectedSets; i++){
+		for(int i =0; i<networkExpectedSets; i++){
 			System.out.println("Open: ");
 		}*/
 
@@ -259,7 +259,7 @@ double[] vals = new double[8];
 			System.out.print(d / vCode + ", ");
 			closeOutA[i - expectedSets] = d / vCode;
 			//System.out.print((output.getData(i)) + ", ");
-			//closeOut[i - expectedSets] = output.getData(i);
+			//closeOut[i - networkExpectedSets] = output.getData(i);
 		}
 
 	}

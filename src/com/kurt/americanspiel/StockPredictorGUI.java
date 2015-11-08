@@ -36,6 +36,16 @@ public class StockPredictorGUI {
 	private JPanel avgCheckPanel;
 	private JTextField checkTimes;
 	private JPanel predictPanel;
+	private JPanel networkPanel;
+	private JTextField setsExpectedBox;
+	private JLabel setsInLabel;
+	private JTextField setsInBox;
+	private JLabel setsExpectedLabel;
+	private JLabel networkEpochsLabel;
+	private JTextField netEpochBox;
+	private JProgressBar progressBar1;
+	private JTextField textField1;
+	private JTextField textField2;
 	private ChartPanel mainChart;
 	private ChartPanel trainingChart;
 	private ChartPanel futureChart;
@@ -50,15 +60,21 @@ public class StockPredictorGUI {
 				SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 					@Override
 					protected Void doInBackground() throws Exception {
+						try {
+							// does somewhat useful stuff
+							String symbol = symbolField.getText();
+							String verify = checkTimes.getText();
+							int vCode = Integer.parseInt(verify);
+							StockPredictorChange.openCloseSets = Integer.parseInt(setsInBox.getText());
+							StockPredictorChange.expectedSets = Integer.parseInt(setsExpectedBox.getText());
+							StockPredictorChange.EPOCHS = Integer.parseInt(netEpochBox.getText());
+							StockPredictorChange.setup(symbol, vCode);
+							StockPredictorChange.calculateBasic();
+							StockPredictorChange.calcAhead();
+						} catch (Exception e) {
 
-						// does somewhat useful stuff
-						String symbol = symbolField.getText();
-						String verify = checkTimes.getText();
-						int vCode = Integer.parseInt(verify);
-						StockPredictorChange.setup(symbol, vCode);
-						StockPredictorChange.calculateBasic();
-						StockPredictorChange.calcAhead();
-
+							e.printStackTrace();
+						}
 						return null;
 					}
 
@@ -69,7 +85,7 @@ public class StockPredictorGUI {
 						XYSeriesCollection dataset = new XYSeriesCollection();
 						XYSeries openIn = new XYSeries("Open In");
 						for (int i = 0; i < StockPredictorChange.openCloseSets; i++) {
-							openIn.add(new XYDataItem(i, StockPredictorChange.openIn[i]));
+							openIn.add(new XYDataItem(i, StockPredictorChange.openInP[i]));
 						}
 						XYSeries openOut = new XYSeries("Open Out");
 						for (int i = StockPredictorChange.openCloseSets; i < StockPredictorChange.openCloseSets + StockPredictorChange.expectedSets; i++) {
@@ -77,7 +93,7 @@ public class StockPredictorGUI {
 						}
 						XYSeries closeIn = new XYSeries("Close In");
 						for (int i = 0; i < StockPredictorChange.openCloseSets; i++) {
-							closeIn.add(new XYDataItem(i, StockPredictorChange.closeIn[i]));
+							closeIn.add(new XYDataItem(i, StockPredictorChange.closeInP[i]));
 						}
 						XYSeries closeOut = new XYSeries("Close Out");
 						for (int i = StockPredictorChange.openCloseSets; i < StockPredictorChange.openCloseSets + StockPredictorChange.expectedSets; i++) {
@@ -92,11 +108,7 @@ public class StockPredictorGUI {
 						for (int i = StockPredictorChange.openCloseSets; i < StockPredictorChange.openCloseSets + StockPredictorChange.expectedSets; i++) {
 							closeIdeal.add(new XYDataItem(i, StockPredictorChange.closeExpected[i - StockPredictorChange.openCloseSets]));
 						}
-						/*XYSeries closeIn = new XYSeries("Close In");
-						for (int i = 0; i < StockPredictorChange.openCloseSets; i++) {
-							openIn.add(new XYDataItem(i, StockPredictorChange.closeIn[i]) );
 
-						}*/
 						dataset.addSeries(openIn); // 0
 						dataset.addSeries(openOut); // 1
 						dataset.addSeries(closeIn); // 2
@@ -122,7 +134,7 @@ public class StockPredictorGUI {
 						XYSeriesCollection futureDataset = new XYSeriesCollection();
 						XYSeries openInF = new XYSeries("Open In");
 						for (int i = 0; i < StockPredictorChange.openCloseSets; i++) {
-							openInF.add(new XYDataItem(i, StockPredictorChange.openInA[i]));
+							openInF.add(new XYDataItem(i, StockPredictorChange.openInAP[i]));
 						}
 						XYSeries openOutF = new XYSeries("Open Out");
 						for (int i = StockPredictorChange.openCloseSets; i < StockPredictorChange.openCloseSets + StockPredictorChange.expectedSets; i++) {
@@ -130,7 +142,7 @@ public class StockPredictorGUI {
 						}
 						XYSeries closeInF = new XYSeries("Close In");
 						for (int i = 0; i < StockPredictorChange.openCloseSets; i++) {
-							closeInF.add(new XYDataItem(i, StockPredictorChange.closeInA[i]));
+							closeInF.add(new XYDataItem(i, StockPredictorChange.closeInAP[i]));
 						}
 						XYSeries closeOutF = new XYSeries("Close Out");
 						for (int i = StockPredictorChange.openCloseSets; i < StockPredictorChange.openCloseSets + StockPredictorChange.expectedSets; i++) {
@@ -214,11 +226,23 @@ public class StockPredictorGUI {
 	}
 
 	public static void main(String[] args) {
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (UnsupportedLookAndFeelException e) {
+			e.printStackTrace();
+		}
 		JFrame frame = new JFrame("StockPredictorGUI");
 		frame.setContentPane(new StockPredictorGUI().mainPanel);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(new Dimension(500, 300));
 		frame.setVisible(true);
+
 
 	}
 

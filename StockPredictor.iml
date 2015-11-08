@@ -8,8 +8,9 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="com.jimmoores:quandl:1.2.0" level="project" />
-    <orderEntry type="library" name="encog-core-3.3.0" level="project" />
+    <orderEntry type="library" name="quandl-1.2.0-javadoc" level="project" />
     <orderEntry type="library" name="jfreechart-1.0.19" level="project" />
-    <orderEntry type="library" name="jcommon-1.0.23" level="project" />
+    <orderEntry type="library" name="encog-core-3.3.0" level="project" />
+    <orderEntry type="library" name="commons-lang3-3.4-javadoc" level="project" />
   </component>
 </module>
