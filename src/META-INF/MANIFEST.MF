@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Class-Path: jfreechart-1.0.19.jar jcommon-1.0.23.jar encog-core-3.3.0.
+ jar commons-lang3-3.4.jar quandl-1.2.0.jar javax.ws.rs-api-2.0.jar th
+ reetenbp-0.9.jar json-1.0.0.v20101106.jar testng-6.8.8.jar bsh-2.0b4.
+ jar jcommander-1.27.jar jersey-client-2.8.jar jersey-common-2.8.jar j
+ avax.annotation-api-1.2.jar jersey-guava-2.8.jar hk2-api-2.2.0.jar hk
+ 2-utils-2.2.0.jar aopalliance-repackaged-2.2.0.jar javax.inject-2.2.0
+ .jar hk2-locator-2.2.0.jar javassist-3.18.1-GA.jar osgi-resource-loca
+ tor-1.0.1.jar opencsv-2.3.jar slf4j-api-1.7.5.jar logback-classic-1.0
+ .13.jar logback-core-1.0.13.jar commons-cli-1.2.jar gson-2.2.2.jar
+Main-Class: com.kurt.americanspiel.StockPredictorGUI
+
