@@ -51,6 +51,7 @@ public class StockPredictorGUI {
 	private ChartPanel futureChart;
 	private XYPlot plot;
 	private XYLineAndShapeRenderer renderer;
+	StockPredictorChangeOOP predictor;
 
 	public StockPredictorGUI() {
 		calculateButton.addActionListener(new ActionListener() {
@@ -65,12 +66,11 @@ public class StockPredictorGUI {
 							String symbol = symbolField.getText();
 							String verify = checkTimes.getText();
 							int vCode = Integer.parseInt(verify);
-							StockPredictorChange.openCloseSets = Integer.parseInt(setsInBox.getText());
-							StockPredictorChange.expectedSets = Integer.parseInt(setsExpectedBox.getText());
-							StockPredictorChange.EPOCHS = Integer.parseInt(netEpochBox.getText());
-							StockPredictorChange.setup(symbol, vCode);
-							StockPredictorChange.calculateBasic();
-							StockPredictorChange.calcAhead();
+							predictor = new StockPredictorChangeOOP(Integer.parseInt(setsInBox.getText()), Integer.parseInt(setsExpectedBox.getText()), 20, 0, Integer.parseInt(netEpochBox.getText()), vCode);
+
+							predictor.setup(symbol, vCode);
+							predictor.calculateBasic();
+							predictor.calcAhead();
 						} catch (Exception e) {
 
 							e.printStackTrace();
@@ -84,29 +84,29 @@ public class StockPredictorGUI {
 						System.out.println("\nworker done");
 						XYSeriesCollection dataset = new XYSeriesCollection();
 						XYSeries openIn = new XYSeries("Open In");
-						for (int i = 0; i < StockPredictorChange.openCloseSets; i++) {
-							openIn.add(new XYDataItem(i, StockPredictorChange.openInP[i]));
+						for (int i = 0; i < predictor.openCloseSets; i++) {
+							openIn.add(new XYDataItem(i, predictor.openInP[i]));
 						}
 						XYSeries openOut = new XYSeries("Open Out");
-						for (int i = StockPredictorChange.openCloseSets; i < StockPredictorChange.openCloseSets + StockPredictorChange.expectedSets; i++) {
-							openOut.add(new XYDataItem(i, StockPredictorChange.openOut[i - StockPredictorChange.openCloseSets]));
+						for (int i = predictor.openCloseSets; i < predictor.openCloseSets + predictor.expectedSets; i++) {
+							openOut.add(new XYDataItem(i, predictor.openOut[i - predictor.openCloseSets]));
 						}
 						XYSeries closeIn = new XYSeries("Close In");
-						for (int i = 0; i < StockPredictorChange.openCloseSets; i++) {
-							closeIn.add(new XYDataItem(i, StockPredictorChange.closeInP[i]));
+						for (int i = 0; i < predictor.openCloseSets; i++) {
+							closeIn.add(new XYDataItem(i, predictor.closeInP[i]));
 						}
 						XYSeries closeOut = new XYSeries("Close Out");
-						for (int i = StockPredictorChange.openCloseSets; i < StockPredictorChange.openCloseSets + StockPredictorChange.expectedSets; i++) {
-							closeOut.add(new XYDataItem(i, StockPredictorChange.closeOut[i - StockPredictorChange.openCloseSets]));
+						for (int i = predictor.openCloseSets; i < predictor.openCloseSets + predictor.expectedSets; i++) {
+							closeOut.add(new XYDataItem(i, predictor.closeOut[i - predictor.openCloseSets]));
 						}
 
 						XYSeries openIdeal = new XYSeries("Open Ideal");
-						for (int i = StockPredictorChange.openCloseSets; i < StockPredictorChange.openCloseSets + StockPredictorChange.expectedSets; i++) {
-							openIdeal.add(new XYDataItem(i, StockPredictorChange.openExpected[i - StockPredictorChange.openCloseSets]));
+						for (int i = predictor.openCloseSets; i < predictor.openCloseSets + predictor.expectedSets; i++) {
+							openIdeal.add(new XYDataItem(i, predictor.openExpected[i - predictor.openCloseSets]));
 						}
 						XYSeries closeIdeal = new XYSeries("Close Ideal");
-						for (int i = StockPredictorChange.openCloseSets; i < StockPredictorChange.openCloseSets + StockPredictorChange.expectedSets; i++) {
-							closeIdeal.add(new XYDataItem(i, StockPredictorChange.closeExpected[i - StockPredictorChange.openCloseSets]));
+						for (int i = predictor.openCloseSets; i < predictor.openCloseSets + predictor.expectedSets; i++) {
+							closeIdeal.add(new XYDataItem(i, predictor.closeExpected[i - predictor.openCloseSets]));
 						}
 
 						dataset.addSeries(openIn); // 0
@@ -119,8 +119,8 @@ public class StockPredictorGUI {
 
 						XYSeriesCollection trainingDataset = new XYSeriesCollection();
 						XYSeries trainingVals = new XYSeries("Training Data In");
-						for (int i = 0; i < StockPredictorChange.trainingStats.size(); i++) {
-							trainingVals.add(new XYDataItem(i, (double) StockPredictorChange.trainingStats.get(i)));
+						for (int i = 0; i < predictor.trainingStats.size(); i++) {
+							trainingVals.add(new XYDataItem(i, (double) predictor.trainingStats.get(i)));
 						}
 
 						trainingDataset.addSeries(trainingVals);
@@ -133,26 +133,26 @@ public class StockPredictorGUI {
 
 						XYSeriesCollection futureDataset = new XYSeriesCollection();
 						XYSeries openInF = new XYSeries("Open In");
-						for (int i = 0; i < StockPredictorChange.openCloseSets; i++) {
-							openInF.add(new XYDataItem(i, StockPredictorChange.openInAP[i]));
+						for (int i = 0; i < predictor.openCloseSets; i++) {
+							openInF.add(new XYDataItem(i, predictor.openInAP[i]));
 						}
 						XYSeries openOutF = new XYSeries("Open Out");
-						for (int i = StockPredictorChange.openCloseSets; i < StockPredictorChange.openCloseSets + StockPredictorChange.expectedSets; i++) {
-							openOutF.add(new XYDataItem(i, StockPredictorChange.openOutA[i - StockPredictorChange.openCloseSets]));
+						for (int i = predictor.openCloseSets; i < predictor.openCloseSets + predictor.expectedSets; i++) {
+							openOutF.add(new XYDataItem(i, predictor.openOutA[i - predictor.openCloseSets]));
 						}
 						XYSeries closeInF = new XYSeries("Close In");
-						for (int i = 0; i < StockPredictorChange.openCloseSets; i++) {
-							closeInF.add(new XYDataItem(i, StockPredictorChange.closeInAP[i]));
+						for (int i = 0; i < predictor.openCloseSets; i++) {
+							closeInF.add(new XYDataItem(i, predictor.closeInAP[i]));
 						}
 						XYSeries closeOutF = new XYSeries("Close Out");
-						for (int i = StockPredictorChange.openCloseSets; i < StockPredictorChange.openCloseSets + StockPredictorChange.expectedSets; i++) {
-							closeOutF.add(new XYDataItem(i, StockPredictorChange.closeOutA[i - StockPredictorChange.openCloseSets]));
+						for (int i = predictor.openCloseSets; i < predictor.openCloseSets + predictor.expectedSets; i++) {
+							closeOutF.add(new XYDataItem(i, predictor.closeOutA[i - predictor.openCloseSets]));
 						}
 
 
 						/*XYSeries closeIn = new XYSeries("Close In");
-						for (int i = 0; i < StockPredictorChange.openCloseSets; i++) {
-							openIn.add(new XYDataItem(i, StockPredictorChange.closeIn[i]) );
+						for (int i = 0; i < predictor.openCloseSets; i++) {
+							openIn.add(new XYDataItem(i, predictor.closeIn[i]) );
 
 						}*/
 						futureDataset.addSeries(openInF); // 0

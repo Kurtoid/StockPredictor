@@ -23,6 +23,7 @@ import java.util.Iterator;
  * Created by Kurt on 8/30/2015. This program tires to predict stock values
  * using a neural network
  */
+@Deprecated
 public class StockPredictorChange {
 	static int numToProcess = 360 * 5;
 
@@ -411,7 +412,9 @@ public class StockPredictorChange {
 			int epoch = 1;
 			do {
 				train.iteration();
-				System.out.println("Epoch # " + epoch + "Error:" + train.getError());
+				if (epoch % 10 == 0) {
+					System.out.println("Epoch # " + epoch + "Error:" + train.getError());
+				}
 				trainingStats.add(train.getError());
 				epoch++;
 			} while (epoch < EPOCHS);
