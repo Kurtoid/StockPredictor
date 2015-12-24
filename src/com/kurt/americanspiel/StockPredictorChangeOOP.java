@@ -15,7 +15,10 @@ import org.encog.neural.error.ATanErrorFunction;
 import org.encog.neural.networks.BasicNetwork;
 import org.encog.neural.networks.layers.BasicLayer;
 import org.encog.neural.networks.training.propagation.resilient.ResilientPropagation;
+import org.encog.util.csv.CSVFormat;
+import org.encog.util.simple.EncogUtility;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -53,26 +56,33 @@ public class StockPredictorChangeOOP {
 
 		newVals = new double[1][nInput];
 
-		 openInA = new double[openCloseSets];
-		 closeInA = new double[openCloseSets];
+		openInA = new double[openCloseSets];
+		closeInA = new double[openCloseSets];
 
 		//permanant
-		 openInAP = new double[openCloseSets];
-		 closeInAP = new double[openCloseSets];
+		openInAP = new double[openCloseSets];
+		closeInAP = new double[openCloseSets];
 
-		 networkInA = new double[openCloseSets];
+		networkInA = new double[openCloseSets];
 
 		// set from output when compute done
-		 openOutA = new double[expectedSets];
-		 closeOutA = new double[expectedSets];
+		openOutA = new double[expectedSets];
+		closeOutA = new double[expectedSets];
 
 
-		 newValsA = new double[nInput];
+		newValsA = new double[nInput];
 
-		
+
 	}
 
-	int numToProcess = 360 * 5;
+	public double pOpenSeed;
+	public double pCloseSeed;
+
+	public double aOpenSeed;
+	public double aCloseSeed;
+
+
+	int numToProcess = 360 * 4;
 
 	public int openCloseSets = 14;
 	public int expectedSets = 4;
@@ -259,8 +269,6 @@ public class StockPredictorChangeOOP {
 
 	}
 
-	
-
 
 	double[] openInA;
 	double[] closeInA;
@@ -277,6 +285,8 @@ public class StockPredictorChangeOOP {
 
 
 	double[] newValsA;
+
+
 	public void assignValsA() {
 		for (int i = 0; i < openCloseSets; i++) {
 			newValsA[i] = openInA[i];
@@ -291,6 +301,8 @@ public class StockPredictorChangeOOP {
 
 
 		System.out.println("sending out of sample data to jpanel");
+		pOpenSeed = open.get(openCloseSets);
+		pCloseSeed = close.get(openCloseSets);
 
 		for (int j = 0; j < openCloseSets; j++) {
 			double oldVal = open.get((openCloseSets - j));
@@ -357,10 +369,11 @@ public class StockPredictorChangeOOP {
 
 	public void setup(String symbol, int tCode) {
 		vCode = tCode;
+
 		QuandlSession session = QuandlSession.create("KTPnhGwcsM22WuNTawNF");
 
 		System.out.println("session started");
-		TabularResult tabularResult = session.getDataSet(DataSetRequest.Builder.of("WIKI/" + symbol).build());
+		TabularResult tabularResult = session.getDataSet(DataSetRequest.Builder.of(symbol).build());
 		TabularResult gold = session.getDataSet(DataSetRequest.Builder.of("OPEC/ORB").build());
 		System.out.println("Data built: stocks:" + tabularResult.size() + ", other: " + gold.size());
 
@@ -375,8 +388,15 @@ public class StockPredictorChangeOOP {
 		Iterator<Row> iterator = tabularResult.iterator();
 		while (iterator.hasNext()) {
 			Row row = iterator.next();
-			close.add(row.getDouble("Close"));
-			open.add(row.getDouble("Open"));
+			if (!symbol.equals("BTCE/USDBTC")) {
+				close.add(row.getDouble("Close"));
+				open.add(row.getDouble("Open"));
+			}else{
+				close.add(row.getDouble("High"));
+				open.add(row.getDouble("Low"));
+				numToProcess=tabularResult.size()-40;
+			}
+
 			// System.out.println(row.getLocalDate("Date").toString());
 
 		}
@@ -396,7 +416,7 @@ public class StockPredictorChangeOOP {
 	     * percent change: divide by old value : ((new - old) / old)*100 in
 	     * this case, old is current + 1
 	     */
-
+			System.out.println(i);
 			// populate open values
 			for (int j = 0; j < openCloseSets; j++) {
 				double oldVal = open.get((openCloseSets - j + offset + i));
@@ -416,7 +436,7 @@ public class StockPredictorChangeOOP {
 				double oldVal = goldPrices.get(((openCloseSets * 2) + otherBack) - j + i + 1 + offset);
 				double newVal = goldPrices.get(((openCloseSets * 2) + otherBack) - j + i + offset);
 				values[i][j] = ((newVal - oldVal) / oldVal);
-				System.out.println(i + " " + j);
+				//System.out.println(i + " " + j);
 			}
 
 			// populate expected: open
@@ -437,17 +457,16 @@ public class StockPredictorChangeOOP {
 		for (double[] value : values) {
 			for (int j = 0; j < value.length; j++) {
 				System.out.print(value[j]);
-				if (j < value.length - 1)
-					System.out.print(" ");
+				/*i*//*f (j < value.length - 1)
+					System.out.print(" ");*/
 			}
-			System.out.println();
+			//System.out.println();
 		}
 		MLDataSet trainingSet = new BasicMLDataSet(values, expected);
 
 		for (int k = 0; k < vCode; k++) {
 			BasicNetwork network = new BasicNetwork();
 			network.addLayer(new BasicLayer(null, true, nInput));
-			network.addLayer(new BasicLayer(new ActivationTANH(), true, (expectedSets + openCloseSets + otherBack) / 3));
 			network.addLayer(new BasicLayer(new ActivationTANH(), true, (expectedSets + openCloseSets + otherBack) / 3));
 			network.addLayer(new BasicLayer(new ActivationTANH(), true, (expectedSets + openCloseSets + otherBack) / 3));
 			network.addLayer(new BasicLayer(new ActivationTANH(), false, expectedSets * 2));
@@ -457,20 +476,24 @@ public class StockPredictorChangeOOP {
 			ResilientPropagation train = new ResilientPropagation(network, trainingSet);
 			train.setThreadCount(4);
 			train.setErrorFunction(new ATanErrorFunction());
-
+			//EncogDirectoryPersistence.saveObject(new File("trainingSet" + k + ".egb"), train);
+			EncogUtility.saveCSV(new File("trainingSet" + k + ".egb"), CSVFormat.DECIMAL_POINT, trainingSet);
 			int epoch = 1;
 			do {
 				train.iteration();
 				if (epoch % 10 == 0) {
 					System.out.println("Epoch # " + epoch + "Error:" + train.getError());
+
 				}
 				trainingStats.add(train.getError());
 				epoch++;
 			} while (epoch < EPOCHS);
 			train.finishTraining();
+		/*	EncogDirectoryPersistence.saveObject(new File("network" + k + ".eg"),
+					network);*/
 			networks.add(network);
 		}
-		System.out.println(" Neural Network Results : ");
+		System.out.println("Neural Network Results : ");
 
 		for (MLDataPair pair : trainingSet) {
 			final MLData output = networks.get(0).compute(pair.getInput());
@@ -515,8 +538,8 @@ public class StockPredictorChangeOOP {
 			// two newlines
 			System.out.println("\n");
 		}
-		// EncogDirectoryPersistence.saveObject(new File("network.nn"),
-		// network);
+
+
 		System.out.println("done");
 	}
 

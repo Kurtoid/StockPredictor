@@ -3,6 +3,7 @@ package com.kurt.americanspiel;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.LogarithmicAxis;
 import org.jfree.chart.labels.StandardXYItemLabelGenerator;
 import org.jfree.chart.labels.XYItemLabelGenerator;
 import org.jfree.chart.plot.PlotOrientation;
@@ -18,6 +19,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.NumberFormat;
+import java.util.List;
 
 /**
  * Created by Kurt on 9/26/2015.
@@ -43,7 +45,10 @@ public class StockPredictorGUI {
 	private JLabel setsExpectedLabel;
 	private JLabel networkEpochsLabel;
 	private JTextField netEpochBox;
-	private JProgressBar progressBar1;
+	private JCheckBox percentChangeToggle;
+	private JCheckBox checkBox1;
+	/*	private JLabel loadingLabel;
+		private JPanel loadingPanel;*/
 	private JTextField textField1;
 	private JTextField textField2;
 	private ChartPanel mainChart;
@@ -52,15 +57,20 @@ public class StockPredictorGUI {
 	private XYPlot plot;
 	private XYLineAndShapeRenderer renderer;
 	StockPredictorChangeOOP predictor;
+	XYSeriesCollection dataset;
+	boolean changeMode = true;
+	private static JFrame frame;
 
 	public StockPredictorGUI() {
 		calculateButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 
-				SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+				SwingWorker<List<Integer>, Integer> worker = new SwingWorker<List<Integer>, Integer>() {
+
+
 					@Override
-					protected Void doInBackground() throws Exception {
+					protected List<Integer> doInBackground() throws Exception {
 						try {
 							// does somewhat useful stuff
 							String symbol = symbolField.getText();
@@ -78,14 +88,18 @@ public class StockPredictorGUI {
 						return null;
 					}
 
+
 					@Override
 					protected void done() {
 						super.done();
+
 						System.out.println("\nworker done");
-						XYSeriesCollection dataset = new XYSeriesCollection();
+						dataset = new XYSeriesCollection();
 						XYSeries openIn = new XYSeries("Open In");
 						for (int i = 0; i < predictor.openCloseSets; i++) {
+
 							openIn.add(new XYDataItem(i, predictor.openInP[i]));
+
 						}
 						XYSeries openOut = new XYSeries("Open Out");
 						for (int i = predictor.openCloseSets; i < predictor.openCloseSets + predictor.expectedSets; i++) {
@@ -163,17 +177,31 @@ public class StockPredictorGUI {
 						predictPanel.add(futureChart);
 						predictPanel.setVisible(true);
 						futureChart.repaint();
+						predictPanel.repaint();
 
 						// must be last
 						mainChart = new ChartPanel(createChart(dataset, true));
 						graphPanel.add(mainChart);
-						mainChart.repaint();
+
+						//loadingPanel.setVisible(false);
+						//frame.paint(frame.getGraphics());
+						mainPanel.validate();
+						mainPanel.repaint();
 					}
 				};
+				//loadingPanel.setVisible(true);
+				//frame.paint(frame.getGraphics());
 
 				worker.execute();
 
 
+			}
+		});
+		percentChangeToggle.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent actionEvent) {
+				changeMode ^= true; // toggles variable
+				pUpdateSeedValues(changeMode);
 			}
 		});
 		symbolField.addActionListener(new ActionListener() {
@@ -225,6 +253,40 @@ public class StockPredictorGUI {
 		});
 	}
 
+	private void pUpdateSeedValues(boolean status) {
+		if (status) {
+			XYSeries openInData = dataset.getSeries(0);
+			for (int i = 0; i < openInData.getItemCount(); i++) {
+				double t = (double)openInData.getY(i);
+				//double t2 = t + (t*)
+
+			}
+			XYSeries openOutData = dataset.getSeries(1);
+			for (int i = 0; i < openInData.getItemCount(); i++) {
+
+			}
+			XYSeries closeInData = dataset.getSeries(2);
+			for (int i = 0; i < openInData.getItemCount(); i++) {
+
+			}
+			XYSeries closeOutData = dataset.getSeries(3);
+			for (int i = 0; i < openInData.getItemCount(); i++) {
+
+			}
+			XYSeries openIdealData = dataset.getSeries(4);
+			for (int i = 0; i < openInData.getItemCount(); i++) {
+
+			}
+			XYSeries closeIdealData = dataset.getSeries(5);
+			for (int i = 0; i < openInData.getItemCount(); i++) {
+
+			}
+		} else {
+
+		}
+
+	}
+
 	public static void main(String[] args) {
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -237,7 +299,7 @@ public class StockPredictorGUI {
 		} catch (UnsupportedLookAndFeelException e) {
 			e.printStackTrace();
 		}
-		JFrame frame = new JFrame("StockPredictorGUI");
+		frame = new JFrame("StockPredictorGUI");
 		frame.setContentPane(new StockPredictorGUI().mainPanel);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(new Dimension(500, 300));
@@ -282,6 +344,9 @@ public class StockPredictorGUI {
 		renderer =
 				new XYLineAndShapeRenderer(true, showLabels);
 		plot.setRenderer(renderer);
+		if (!showLabels) {
+			plot.setRangeAxis(new LogarithmicAxis("Change"));
+		}
 		//renderer.setBaseShapesVisible(true);
 		//renderer.setBaseShapesFilled(true);
 

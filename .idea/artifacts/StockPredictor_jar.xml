@@ -6,14 +6,12 @@
         <element id="module-output" name="StockPredictor" />
         <element id="dir-copy" path="$PROJECT_DIR$" />
       </element>
-      <element id="directory" name="libs">
-        <element id="library" level="project" name="com.jimmoores:quandl:1.2.0" />
-        <element id="library" level="project" name="commons-lang3-3.4-javadoc" />
-        <element id="library" level="project" name="encog-core-3.3.0" />
-        <element id="library" level="project" name="quandl-1.2.0-javadoc" />
-        <element id="file-copy" path="$PROJECT_DIR$/lib/jcommon-1.0.23.jar" />
-        <element id="file-copy" path="$PROJECT_DIR$/lib/jfreechart-1.0.19.jar" />
-      </element>
+      <element id="library" level="project" name="encog-core-3.3.0" />
+      <element id="library" level="project" name="com.jimmoores:quandl:1.2.0" />
+      <element id="library" level="project" name="quandl-1.2.0-javadoc" />
+      <element id="file-copy" path="$PROJECT_DIR$/lib/jcommon-1.0.23.jar" />
+      <element id="file-copy" path="$PROJECT_DIR$/lib/jfreechart-1.0.19.jar" />
+      <element id="library" level="project" name="commons-lang3-3.4-javadoc" />
     </root>
   </artifact>
 </component>

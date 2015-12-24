@@ -10,6 +10,7 @@
       <root url="file://$PROJECT_DIR$/lib/jimmoores-quandl4j-0f684f6/src/main/java" />
       <root url="file://$PROJECT_DIR$/lib/jimmoores-quandl4j-0f684f6/src/test/java" />
       <root url="file://$PROJECT_DIR$/src" />
+      <root url="jar://$USER_HOME$/.ideaLibSources/jfreechart-1.0.19-sources.jar!/" />
     </SOURCES>
   </library>
 </component>

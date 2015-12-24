@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 /**
- * Created by Kurt on 8/30/2015. This program tires to predict stock values
+ * Created by Kurt on 8/30/2015. This program tires (and fails) to predict stock values
  * using a neural network
  */
 @Deprecated
